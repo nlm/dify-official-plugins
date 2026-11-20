@@ -35,6 +35,17 @@ class ScalewayLargeLanguageModel(OAICompatLargeLanguageModel):
     def validate_credentials(self, model: str, credentials: dict) -> None:
         super().validate_credentials(model, self._prepare(credentials))
 
+    def get_num_tokens(
+        self,
+        model: str,
+        credentials: dict,
+        prompt_messages: list[PromptMessage],
+        tools: Optional[list[PromptMessageTool]] = None,
+    ) -> int:
+        # Without function_calling_type, the base class drops tool messages and tool
+        # calls when counting, so agent conversations would be undercounted.
+        return super().get_num_tokens(model, self._prepare(credentials), prompt_messages, tools)
+
     def get_customizable_model_schema(self, model: str, credentials: dict) -> AIModelEntity:
         return super().get_customizable_model_schema(model, self._prepare(credentials))
 

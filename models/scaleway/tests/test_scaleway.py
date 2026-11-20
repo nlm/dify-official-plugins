@@ -125,3 +125,32 @@ def test_llm_request_targets_scaleway_and_forwards_tools(monkeypatch):
     assert captured["headers"]["Authorization"] == "Bearer secret"
     assert captured["body"]["model"] == "llama-3.3-70b-instruct"
     assert captured["body"]["tools"][0]["function"]["name"] == "get_weather"
+
+
+def test_get_num_tokens_counts_tool_messages():
+    from dify_plugin.entities.model.message import (
+        AssistantPromptMessage,
+        ToolPromptMessage,
+        UserPromptMessage,
+    )
+
+    tool_output = "lorem ipsum dolor sit amet " * 400
+    messages = [
+        UserPromptMessage(content="search"),
+        AssistantPromptMessage(
+            content="",
+            tool_calls=[
+                AssistantPromptMessage.ToolCall(
+                    id="call_1",
+                    type="function",
+                    function=AssistantPromptMessage.ToolCall.ToolCallFunction(
+                        name="search", arguments="{}"
+                    ),
+                )
+            ],
+        ),
+        ToolPromptMessage(content=tool_output, tool_call_id="call_1", name="search"),
+    ]
+    model = ScalewayLargeLanguageModel(model_schemas=[])
+    count = model.get_num_tokens("llama-3.3-70b-instruct", {"api_key": "k"}, messages)
+    assert count >= 2000  # the tool output alone is ~2000 tokens
