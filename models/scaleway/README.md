@@ -16,9 +16,9 @@ Supported model types:
    - **Project ID** (optional): bills usage to that Project. Requests then go to `https://api.scaleway.ai/<project_id>/v1`. If you leave it empty, requests go to `https://api.scaleway.ai/v1` and are billed to the default Project.
 3. Save. The plugin validates the key with a short request to `mistral-small-3.2-24b-instruct-2506`.
 
-### Custom models and Dedicated Deployments
+### Custom models
 
-Use **Add Model** to register a model that is not predefined: a newly released serverless model, or a model on a Scaleway **Dedicated Deployment**. For a Dedicated Deployment, set **Dedicated Deployment endpoint URL** to `https://<deployment-uuid>.ifr.fr-par.scaleway.com/v1`, and use the model name shown in the deployment (for example `qwen/qwen3.6-35b-a3b:fp8`).
+Use **Add Model** to register a serverless model that this plugin doesn't predefine yet, such as a model Scaleway released recently. Use the model ID from the [supported models](https://www.scaleway.com/en/docs/generative-apis/reference-content/supported-models/) page. Requests always go to the serverless endpoint (`api.scaleway.ai`). Dedicated Deployments are not supported.
 
 ## Updating the model list
 

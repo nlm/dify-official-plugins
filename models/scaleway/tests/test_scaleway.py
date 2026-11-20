@@ -22,30 +22,25 @@ PROJECT_ID = "11111111-2222-3333-4444-555555555555"
         ({"api_key": "k"}, "https://api.scaleway.ai/v1"),
         ({"api_key": "k", "project_id": ""}, "https://api.scaleway.ai/v1"),
         ({"api_key": "k", "project_id": f" {PROJECT_ID} "}, f"https://api.scaleway.ai/{PROJECT_ID}/v1"),
-        (
-            {"endpoint_url": "https://abc.ifr.fr-par.scaleway.com", "project_id": PROJECT_ID},
-            "https://abc.ifr.fr-par.scaleway.com/v1",
-        ),
-        ({"endpoint_url": "https://abc.ifr.fr-par.scaleway.com/v1/"}, "https://abc.ifr.fr-par.scaleway.com/v1"),
     ],
 )
 def test_resolve_endpoint_url(credentials, expected):
     assert resolve_endpoint_url(credentials) == expected
 
 
-@pytest.mark.parametrize(
-    "credentials",
-    [
-        {"project_id": "not-a-uuid"},
-        {"project_id": "../evil"},
-        {"endpoint_url": "abc.scaleway.com"},
-        {"endpoint_url": "http://abc.ifr.fr-par.scaleway.com/v1"},
-        {"endpoint_url": "ftp://abc.ifr.fr-par.scaleway.com/v1"},
-    ],
-)
-def test_resolve_endpoint_url_rejects_invalid(credentials):
+@pytest.mark.parametrize("project_id", ["not-a-uuid", "../evil", f"{PROJECT_ID}/../x"])
+def test_resolve_endpoint_url_rejects_invalid_project_id(project_id):
     with pytest.raises(CredentialsValidateFailedError):
-        resolve_endpoint_url(credentials)
+        resolve_endpoint_url({"project_id": project_id})
+
+
+@pytest.mark.parametrize(
+    "endpoint_url", ["https://abc.ifr.fr-par.scaleway.com/v1", "http://attacker.example/v1"]
+)
+def test_prepare_credentials_ignores_any_endpoint_url(endpoint_url):
+    """Only the serverless endpoint is supported: a stray endpoint_url never receives the key."""
+    prepared = prepare_credentials({"api_key": "k", "endpoint_url": endpoint_url})
+    assert prepared["endpoint_url"] == "https://api.scaleway.ai/v1"
 
 
 def test_prepare_credentials_does_not_mutate_input():

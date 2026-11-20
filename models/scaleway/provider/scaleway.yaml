@@ -57,15 +57,6 @@ model_credential_schema:
       required: false
       placeholder:
         en_US: Optional. Bill usage to this Scaleway Project instead of the default one
-    - variable: endpoint_url
-      label:
-        en_US: Dedicated Deployment endpoint URL
-      type: text-input
-      required: false
-      placeholder:
-        en_US: Optional, https only. e.g. https://<deployment-uuid>.ifr.fr-par.scaleway.com/v1
-      help:
-        en_US: Leave empty to use the serverless endpoint (api.scaleway.ai).
     - variable: context_size
       label:
         en_US: Model context size
