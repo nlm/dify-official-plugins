@@ -154,3 +154,32 @@ def test_get_num_tokens_counts_tool_messages():
     model = ScalewayLargeLanguageModel(model_schemas=[])
     count = model.get_num_tokens("llama-3.3-70b-instruct", {"api_key": "k"}, messages)
     assert count >= 2000  # the tool output alone is ~2000 tokens
+
+
+def test_custom_embedding_schema_uses_max_chunks():
+    from dify_plugin.entities.model import ModelPropertyKey
+
+    from models.text_embedding.text_embedding import ScalewayTextEmbeddingModel
+
+    model = ScalewayTextEmbeddingModel(model_schemas=[])
+    credentials = {"api_key": "k", "context_size": "8000", "max_chunks": "16"}
+    schema = model.get_customizable_model_schema("new-embedding", credentials)
+    assert schema.model_properties[ModelPropertyKey.MAX_CHUNKS] == 16
+    assert schema.model_properties[ModelPropertyKey.CONTEXT_SIZE] == 8000
+
+    schema = model.get_customizable_model_schema("new-embedding", {"api_key": "k"})
+    assert schema.model_properties[ModelPropertyKey.MAX_CHUNKS] == 1
+
+
+def test_custom_speech2text_schema_exists():
+    from dify_plugin.entities.model import FetchFrom, ModelPropertyKey, ModelType
+
+    from models.speech2text.speech2text import ScalewaySpeech2TextModel
+
+    schema = ScalewaySpeech2TextModel(model_schemas=[]).get_customizable_model_schema(
+        "new-whisper", {"api_key": "k"}
+    )
+    assert schema is not None
+    assert schema.model_type == ModelType.SPEECH2TEXT
+    assert schema.fetch_from == FetchFrom.CUSTOMIZABLE_MODEL
+    assert schema.model_properties[ModelPropertyKey.FILE_UPLOAD_LIMIT] == 25

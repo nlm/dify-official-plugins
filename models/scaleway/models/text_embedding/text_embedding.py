@@ -1,7 +1,7 @@
 from typing import Optional
 
 from dify_plugin import OAICompatEmbeddingModel
-from dify_plugin.entities.model import AIModelEntity, EmbeddingInputType
+from dify_plugin.entities.model import AIModelEntity, EmbeddingInputType, ModelPropertyKey
 from dify_plugin.entities.model.text_embedding import TextEmbeddingResult
 
 from models.common import prepare_credentials
@@ -22,4 +22,9 @@ class ScalewayTextEmbeddingModel(OAICompatEmbeddingModel):
         super().validate_credentials(model, prepare_credentials(credentials))
 
     def get_customizable_model_schema(self, model: str, credentials: dict) -> AIModelEntity:
-        return super().get_customizable_model_schema(model, prepare_credentials(credentials))
+        schema = super().get_customizable_model_schema(model, prepare_credentials(credentials))
+        # The base class always uses 1; honor the "Max chunks per batch" form field.
+        schema.model_properties[ModelPropertyKey.MAX_CHUNKS] = max(
+            1, int(credentials.get("max_chunks") or 1)
+        )
+        return schema
