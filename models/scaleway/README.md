@@ -11,7 +11,7 @@ Supported model types:
 ## Configure
 
 1. In the [Scaleway console](https://console.scaleway.com/iam/api-keys), create an API key and copy its **secret key**.
-2. In Dify, go to **Settings → Model Provider → Scaleway Generative APIs** and enter:
+2. In Dify, go to **Settings → Model Provider → Scaleway** and enter:
    - **API Secret Key**: the secret key from step 1.
    - **Project ID** (optional): bills usage to that Project. Requests then go to `https://api.scaleway.ai/<project_id>/v1`. If you leave it empty, requests go to `https://api.scaleway.ai/v1` and are billed to the default Project.
 3. Save. The plugin validates the key with a short request to `mistral-small-3.2-24b-instruct-2506`.

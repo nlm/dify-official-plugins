@@ -3,7 +3,7 @@ type: plugin
 author: langgenius
 name: scaleway
 label:
-  en_US: Scaleway Generative APIs
+  en_US: Scaleway
 description:
   en_US: Use Scaleway Generative APIs (OpenAI-compatible, hosted in Europe) for LLM,
     text embedding and speech-to-text models.

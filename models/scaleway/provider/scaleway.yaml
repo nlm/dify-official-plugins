@@ -1,6 +1,6 @@
 provider: scaleway
 label:
-  en_US: Scaleway Generative APIs
+  en_US: Scaleway
 description:
   en_US: Open-weight LLM, embedding and speech-to-text models served from Scaleway's
     European data centers through an OpenAI-compatible API.

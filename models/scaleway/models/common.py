@@ -1,4 +1,4 @@
-"""Shared helpers for the Scaleway Generative APIs model provider."""
+"""Shared helpers for the Scaleway model provider."""
 
 import re
 from collections.abc import Mapping
