@@ -228,7 +228,7 @@ wheels = [
 
 [[package]]
 name = "dify-plugin"
-version = "0.11.1"
+version = "0.10.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "flask" },
@@ -245,9 +245,9 @@ dependencies = [
     { name = "werkzeug" },
     { name = "yarl" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/70/b3/90fcffe3f4b42ac8893ad30d6fad4d2f32037945fd99f0e8bbb85971fcac/dify_plugin-0.11.1.tar.gz", hash = "sha256:71e861c8ba6d62e34ed644ec9b8e6d7ddb39ab76d16307f0367539b3017eae7d", size = 343191, upload-time = "2026-11-16T11:59:30.197Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/16/5a/885909338df3e32604f45c579457c5dcfe982d35857994805735e5487d4b/dify_plugin-0.10.2.tar.gz", hash = "sha256:e37e707b3903c439cd09924b2125ba794ffdc886bfdbcb8f75db28ba64cb795b", size = 320685, upload-time = "2026-08-10T07:04:08.454Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c2/79/53a832ef13cd3d1a75901602a7d68ee6bdbcb048bc4a418130563b8ef91e/dify_plugin-0.11.1-py3-none-any.whl", hash = "sha256:8d838714aee57e96d84fc8326444d150bfceff8f8a3fa267da19c40f28c8ed8e", size = 388333, upload-time = "2026-11-16T11:59:28.367Z" },
+    { url = "https://files.pythonhosted.org/packages/cf/26/5897c50381eb23a10fd7ab770288d8656f3325d3407e4ee4f6fb7e70f76a/dify_plugin-0.10.2-py3-none-any.whl", hash = "sha256:5a30db98cc4c3f36bdcc70ecd217b6bb37279c39fc0a843a985b05581dc461d3", size = 379282, upload-time = "2026-08-10T07:04:07.068Z" },
 ]
 
 [[package]]
@@ -1201,7 +1201,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "dify-plugin", specifier = ">=0.9.0" }]
+requires-dist = [{ name = "dify-plugin", specifier = ">=0.10.2,<0.11.0" }]
 
 [package.metadata.requires-dev]
 dev = [{ name = "pytest", specifier = ">=8" }]
