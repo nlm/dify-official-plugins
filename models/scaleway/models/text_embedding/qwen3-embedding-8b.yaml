@@ -1,0 +1,9 @@
+model: qwen3-embedding-8b
+model_type: text-embedding
+model_properties:
+  context_size: 32000
+  max_chunks: 16
+pricing:
+  input: '0.10'
+  unit: '0.000001'
+  currency: EUR

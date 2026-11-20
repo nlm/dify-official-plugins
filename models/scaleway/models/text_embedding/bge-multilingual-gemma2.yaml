@@ -1,0 +1,9 @@
+model: bge-multilingual-gemma2
+model_type: text-embedding
+model_properties:
+  context_size: 8000
+  max_chunks: 16
+pricing:
+  input: '0.10'
+  unit: '0.000001'
+  currency: EUR

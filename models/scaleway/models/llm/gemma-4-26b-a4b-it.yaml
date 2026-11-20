@@ -1,0 +1,56 @@
+model: gemma-4-26b-a4b-it
+label:
+  en_US: Gemma 4 26B A4B IT
+model_type: llm
+features:
+  - agent-thought
+  - tool-call
+  - multi-tool-call
+  - stream-tool-call
+  - vision
+model_properties:
+  mode: chat
+  context_size: 256000
+parameter_rules:
+  - name: temperature
+    use_template: temperature
+  - name: top_p
+    use_template: top_p
+  - name: presence_penalty
+    use_template: presence_penalty
+  - name: frequency_penalty
+    use_template: frequency_penalty
+  - name: max_tokens
+    use_template: max_tokens
+    default: 4096
+    min: 1
+    max: 32000
+  - name: response_format
+    label:
+      en_US: Response Format
+    type: string
+    help:
+      en_US: specifying the format that the model must output
+    required: false
+    options:
+      - text
+      - json_object
+      - json_schema
+  - name: json_schema
+    use_template: json_schema
+    required: false
+  - name: reasoning_effort
+    label:
+      en_US: Reasoning Effort
+    type: string
+    help:
+      en_US: Constrains how much the model reasons before answering. Leave unset to use the model default.
+    required: false
+    options:
+      - none
+      - medium
+pricing:
+  input: '0.25'
+  output: '0.50'
+  unit: '0.000001'
+  currency: EUR

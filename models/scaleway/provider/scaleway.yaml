@@ -1,0 +1,155 @@
+provider: scaleway
+label:
+  en_US: Scaleway Generative APIs
+description:
+  en_US: Open-weight LLM, embedding and speech-to-text models served from Scaleway's
+    European data centers through an OpenAI-compatible API.
+icon_small:
+  en_US: icon.svg
+icon_large:
+  en_US: icon.svg
+help:
+  title:
+    en_US: Get your API key from the Scaleway console
+  url:
+    en_US: https://console.scaleway.com/iam/api-keys
+supported_model_types:
+  - llm
+  - text-embedding
+  - speech2text
+configurate_methods:
+  - predefined-model
+  - customizable-model
+provider_credential_schema:
+  credential_form_schemas:
+    - variable: api_key
+      label:
+        en_US: API Secret Key
+      type: secret-input
+      required: true
+      placeholder:
+        en_US: Enter your Scaleway API secret key
+    - variable: project_id
+      label:
+        en_US: Project ID
+      type: text-input
+      required: false
+      placeholder:
+        en_US: Optional. Bill usage to this Scaleway Project instead of the default one
+model_credential_schema:
+  model:
+    label:
+      en_US: Model Name
+    placeholder:
+      en_US: Model ID, e.g. qwen3.6-35b-a3b
+  credential_form_schemas:
+    - variable: api_key
+      label:
+        en_US: API Secret Key
+      type: secret-input
+      required: true
+      placeholder:
+        en_US: Enter your Scaleway API secret key
+    - variable: project_id
+      label:
+        en_US: Project ID
+      type: text-input
+      required: false
+      placeholder:
+        en_US: Optional. Bill usage to this Scaleway Project instead of the default one
+    - variable: endpoint_url
+      label:
+        en_US: Dedicated Deployment endpoint URL
+      type: text-input
+      required: false
+      placeholder:
+        en_US: Optional, https only. e.g. https://<deployment-uuid>.ifr.fr-par.scaleway.com/v1
+      help:
+        en_US: Leave empty to use the serverless endpoint (api.scaleway.ai).
+    - variable: context_size
+      label:
+        en_US: Model context size
+      required: true
+      show_on:
+        - variable: __model_type
+          value: llm
+      type: text-input
+      default: "32768"
+    - variable: max_tokens_to_sample
+      label:
+        en_US: Upper bound for max tokens
+      required: true
+      show_on:
+        - variable: __model_type
+          value: llm
+      type: text-input
+      default: "8192"
+    - variable: function_calling_type
+      label:
+        en_US: Function calling
+      show_on:
+        - variable: __model_type
+          value: llm
+      type: select
+      required: false
+      default: tool_call
+      options:
+        - value: tool_call
+          label:
+            en_US: Tool Call
+        - value: no_call
+          label:
+            en_US: Not Support
+    - variable: vision_support
+      label:
+        en_US: Vision support
+      show_on:
+        - variable: __model_type
+          value: llm
+      type: select
+      required: false
+      default: no_support
+      options:
+        - value: support
+          label:
+            en_US: Support
+        - value: no_support
+          label:
+            en_US: Not Support
+    - variable: context_size
+      label:
+        en_US: Model context size
+      required: true
+      show_on:
+        - variable: __model_type
+          value: text-embedding
+      type: text-input
+      default: "8192"
+    - variable: max_chunks
+      label:
+        en_US: Max chunks per batch
+      required: true
+      show_on:
+        - variable: __model_type
+          value: text-embedding
+      type: text-input
+      default: "1"
+models:
+  llm:
+    position: models/llm/_position.yaml
+    predefined:
+      - "models/llm/*.yaml"
+  text_embedding:
+    position: models/text_embedding/_position.yaml
+    predefined:
+      - "models/text_embedding/*.yaml"
+  speech2text:
+    predefined:
+      - "models/speech2text/*.yaml"
+extra:
+  python:
+    provider_source: provider/scaleway.py
+    model_sources:
+      - models/llm/llm.py
+      - models/text_embedding/text_embedding.py
+      - models/speech2text/speech2text.py
