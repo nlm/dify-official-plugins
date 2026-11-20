@@ -1,6 +1,6 @@
-model: qwen3.8-27b
+model: "qwen3.8-27b"
 label:
-  en_US: Qwen3.8 27B
+  en_US: "Qwen3.8 27B"
 model_type: llm
 features:
   - agent-thought
@@ -47,10 +47,10 @@ parameter_rules:
       en_US: Constrains how much the model reasons before answering. Leave unset to use the model default.
     required: false
     options:
-      - none
-      - low
-      - medium
-      - xhigh
+      - "none"
+      - "low"
+      - "medium"
+      - "xhigh"
 pricing:
   input: '0.60'
   output: '3.30'

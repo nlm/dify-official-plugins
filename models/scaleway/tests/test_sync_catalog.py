@@ -88,8 +88,8 @@ def test_render_catalog_builds_llm_yaml_from_catalog_and_profile():
 def test_render_catalog_follows_profile_order_and_skips_inactive_and_unsupported():
     outputs = render_catalog(_catalog(), _profiles())
 
-    assert outputs["llm"]["_position.yaml"] == "- chat-b\n- chat-a\n"
-    assert outputs["text_embedding"]["_position.yaml"] == "- embed\n"
+    assert yaml.safe_load(outputs["llm"]["_position.yaml"]) == ["chat-b", "chat-a"]
+    assert yaml.safe_load(outputs["text_embedding"]["_position.yaml"]) == ["embed"]
     assert set(outputs["llm"]) == {"chat-a.yaml", "chat-b.yaml", "_position.yaml"}
     assert set(outputs["speech2text"]) == {"whisper.yaml"}
 
@@ -155,3 +155,37 @@ def test_committed_profiles_match_committed_model_files():
         position = directory / "_position.yaml"
         if position.exists():
             assert yaml.safe_load(position.read_text()) == list(profiles[kind]), kind
+
+
+def _cached_first_catalog():
+    """chat-a with its cached-input entry first: no reasoning values, no vision task."""
+    catalog = _catalog()
+    cached = catalog.pop(1)
+    cached["properties"]["generative_apis"]["tasks"] = ["chat"]
+    return [cached, *catalog]
+
+
+def test_model_metadata_does_not_depend_on_catalog_order():
+    expected = render_catalog(_catalog(), _profiles())
+    assert render_catalog(_cached_first_catalog(), _profiles()) == expected
+    assert render_catalog(list(reversed(_catalog())), _profiles()) == expected
+
+
+def test_conflicting_reasoning_values_fail():
+    catalog = _catalog()
+    catalog[2]["properties"]["generative_apis"]["supported_reasoning_values"] = ["low"]
+    with pytest.raises(CatalogError, match="disagree on reasoning values"):
+        render_catalog(catalog, _profiles())
+
+
+def test_strings_are_quoted_so_yaml_keeps_them_as_strings():
+    catalog = _catalog()
+    for product in catalog[:3]:
+        product["properties"]["generative_apis"]["supported_reasoning_values"] = ["off", "on"]
+    profiles = _profiles()
+    profiles["llm"]["chat-a"]["label"] = "Chat: A # preview"
+    chat_a = yaml.safe_load(render_catalog(catalog, profiles)["llm"]["chat-a.yaml"])
+
+    assert chat_a["label"]["en_US"] == "Chat: A # preview"
+    rules = {rule["name"]: rule for rule in chat_a["parameter_rules"]}
+    assert rules["reasoning_effort"]["options"] == ["off", "on"]

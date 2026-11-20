@@ -1,4 +1,4 @@
-model: bge-multilingual-gemma2
+model: "bge-multilingual-gemma2"
 model_type: text-embedding
 model_properties:
   context_size: 8000

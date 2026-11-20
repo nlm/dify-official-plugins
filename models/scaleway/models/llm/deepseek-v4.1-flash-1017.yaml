@@ -1,6 +1,6 @@
-model: deepseek-v4.1-flash-1017
+model: "deepseek-v4.1-flash-1017"
 label:
-  en_US: DeepSeek V4.1 Flash (1017)
+  en_US: "DeepSeek V4.1 Flash (1017)"
 model_type: llm
 features:
   - agent-thought
@@ -47,10 +47,10 @@ parameter_rules:
       en_US: Constrains how much the model reasons before answering. Leave unset to use the model default.
     required: false
     options:
-      - none
-      - low
-      - high
-      - max
+      - "none"
+      - "low"
+      - "high"
+      - "max"
 pricing:
   input: '0.60'
   output: '1.80'

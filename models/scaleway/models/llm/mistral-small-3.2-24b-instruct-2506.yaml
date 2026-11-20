@@ -1,6 +1,6 @@
-model: mistral-small-3.2-24b-instruct-2506
+model: "mistral-small-3.2-24b-instruct-2506"
 label:
-  en_US: Mistral Small 3.2 24B Instruct (2506)
+  en_US: "Mistral Small 3.2 24B Instruct (2506)"
 model_type: llm
 features:
   - agent-thought

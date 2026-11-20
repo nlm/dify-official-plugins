@@ -92,7 +92,13 @@ def _price_per_million(product: dict[str, Any]) -> Decimal:
 
 
 def collect_models(products: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
-    """Group realtime catalog entries for the region into one record per active model."""
+    """
+    Group realtime catalog entries for the region into one record per active model.
+
+    A model has one catalog entry per token type (input, cached input, output), and
+    entries can differ in the metadata they carry, so merge them all: the result must
+    not depend on the order the catalog lists them in.
+    """
     models: dict[str, dict[str, Any]] = {}
     for product in products:
         props = _properties(product)
@@ -103,24 +109,36 @@ def collect_models(products: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
         if product.get("status") not in ACTIVE_STATUSES:
             continue
         name = product["product"]
-        tasks = set(props.get("tasks") or [])
         model = models.setdefault(
-            name,
-            {
-                "id": name,
-                "type": _model_type(tasks),
-                "vision": "vision" in tasks,
-                "reasoning_values": list(props.get("supported_reasoning_values") or []),
-                "prices": {},
-            },
+            name, {"id": name, "tasks": set(), "reasoning_values": [], "prices": {}}
         )
+        model["tasks"].update(props.get("tasks") or [])
+        reasoning = list(props.get("supported_reasoning_values") or [])
+        if reasoning:
+            if model["reasoning_values"] and model["reasoning_values"] != reasoning:
+                raise CatalogError(
+                    f"{name}: catalog entries disagree on reasoning values: "
+                    f"{model['reasoning_values']} vs {reasoning}"
+                )
+            model["reasoning_values"] = reasoning
         token_type = props.get("token_type")
         if token_type in ("input_token", "output_token") and product.get("price"):
             model["prices"][token_type] = _price_per_million(product)
+
+    for model in models.values():
+        tasks = model.pop("tasks")
+        model["type"] = _model_type(tasks)
+        model["vision"] = "vision" in tasks
     return models
 
 
 # --------------------------------------------------------------------------- rendering
+
+
+def _quote(value: str) -> str:
+    """Quote a string as YAML (a JSON string is valid YAML), so values like `off` or
+    labels containing `: ` stay plain strings."""
+    return json.dumps(str(value), ensure_ascii=False)
 
 
 def _format_price(value: Decimal) -> str:
@@ -143,7 +161,7 @@ def render_llm(model: dict[str, Any], profile: dict[str, Any]) -> str:
     features = ["agent-thought", "tool-call", "multi-tool-call", "stream-tool-call"]
     if model["vision"]:
         features.append("vision")
-    lines = [f"model: {model['id']}", "label:", f"  en_US: {profile['label']}"]
+    lines = [f"model: {_quote(model['id'])}", "label:", f"  en_US: {_quote(profile['label'])}"]
     lines += ["model_type: llm", "features:", *(f"  - {f}" for f in features)]
     lines += ["model_properties:", "  mode: chat", f"  context_size: {int(profile['context_size'])}"]
     lines += [
@@ -187,14 +205,14 @@ def render_llm(model: dict[str, Any], profile: dict[str, Any]) -> str:
             " Leave unset to use the model default.",
             "    required: false",
             "    options:",
-            *(f"      - {value}" for value in model["reasoning_values"]),
+            *(f"      - {_quote(value)}" for value in model["reasoning_values"]),
         ]
     return "\n".join(lines + _render_pricing(model["prices"])) + "\n"
 
 
 def render_text_embedding(model: dict[str, Any], profile: dict[str, Any]) -> str:
     lines = [
-        f"model: {model['id']}",
+        f"model: {_quote(model['id'])}",
         "model_type: text-embedding",
         "model_properties:",
         f"  context_size: {int(profile['context_size'])}",
@@ -206,11 +224,11 @@ def render_text_embedding(model: dict[str, Any], profile: dict[str, Any]) -> str
 def render_speech2text(model: dict[str, Any], profile: dict[str, Any]) -> str:
     # Whisper is billed per audio minute, which Dify pricing cannot express.
     lines = [
-        f"model: {model['id']}",
+        f"model: {_quote(model['id'])}",
         "model_type: speech2text",
         "model_properties:",
         f"  file_upload_limit: {int(profile['file_upload_limit'])}",
-        f"  supported_file_extensions: {profile['supported_file_extensions']}",
+        f"  supported_file_extensions: {_quote(profile['supported_file_extensions'])}",
     ]
     return "\n".join(lines) + "\n"
 
@@ -254,7 +272,7 @@ def render_catalog(
             outputs[kind][f"{model_id}.yaml"] = RENDERERS[kind](model, profile)
             rendered_ids.append(model_id)
         if kind in POSITIONED_TYPES:
-            outputs[kind]["_position.yaml"] = "".join(f"- {i}\n" for i in rendered_ids)
+            outputs[kind]["_position.yaml"] = "".join(f"- {_quote(i)}\n" for i in rendered_ids)
 
     if errors:
         raise CatalogError("\n  ".join(["catalog and model_profiles.json disagree:", *errors]))

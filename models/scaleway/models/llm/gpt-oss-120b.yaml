@@ -1,6 +1,6 @@
-model: gpt-oss-120b
+model: "gpt-oss-120b"
 label:
-  en_US: gpt-oss-120b
+  en_US: "gpt-oss-120b"
 model_type: llm
 features:
   - agent-thought
@@ -46,9 +46,9 @@ parameter_rules:
       en_US: Constrains how much the model reasons before answering. Leave unset to use the model default.
     required: false
     options:
-      - low
-      - medium
-      - high
+      - "low"
+      - "medium"
+      - "high"
 pricing:
   input: '0.15'
   output: '0.60'

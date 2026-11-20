@@ -1,6 +1,6 @@
-model: mistral-medium-3.5-128b
+model: "mistral-medium-3.5-128b"
 label:
-  en_US: Mistral Medium 3.5 128B
+  en_US: "Mistral Medium 3.5 128B"
 model_type: llm
 features:
   - agent-thought
@@ -47,8 +47,8 @@ parameter_rules:
       en_US: Constrains how much the model reasons before answering. Leave unset to use the model default.
     required: false
     options:
-      - none
-      - high
+      - "none"
+      - "high"
 pricing:
   input: '1.50'
   output: '7.50'

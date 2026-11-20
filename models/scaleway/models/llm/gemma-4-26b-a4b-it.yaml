@@ -1,6 +1,6 @@
-model: gemma-4-26b-a4b-it
+model: "gemma-4-26b-a4b-it"
 label:
-  en_US: Gemma 4 26B A4B IT
+  en_US: "Gemma 4 26B A4B IT"
 model_type: llm
 features:
   - agent-thought
@@ -47,8 +47,8 @@ parameter_rules:
       en_US: Constrains how much the model reasons before answering. Leave unset to use the model default.
     required: false
     options:
-      - none
-      - medium
+      - "none"
+      - "medium"
 pricing:
   input: '0.25'
   output: '0.50'
